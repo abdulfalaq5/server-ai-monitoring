@@ -1,0 +1,93 @@
+version: "3.9"
+
+# =============================================================================
+# SERVER AI MONITORING - Docker Compose
+# =============================================================================
+# Usage:
+#   cp .env.example .env && nano .env
+#   docker compose up -d
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # MCP Monitoring Server (READ-ONLY)
+  # ---------------------------------------------------------------------------
+  mcp-monitoring:
+    build:
+      context: ./mcp-monitoring
+      dockerfile: Dockerfile
+    container_name: mcp-monitoring
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      MCP_SERVER_PORT: ${MCP_SERVER_PORT:-3000}
+      MCP_LOG_LEVEL: ${MCP_LOG_LEVEL:-info}
+      POSTGRES_MONITOR_HOST: ${POSTGRES_MONITOR_HOST}
+      POSTGRES_MONITOR_PORT: ${POSTGRES_MONITOR_PORT:-5432}
+      POSTGRES_MONITOR_DB: ${POSTGRES_MONITOR_DB:-postgres}
+      POSTGRES_MONITOR_USER: ${POSTGRES_MONITOR_USER}
+      POSTGRES_MONITOR_PASSWORD: ${POSTGRES_MONITOR_PASSWORD}
+      RABBITMQ_MONITOR_HOST: ${RABBITMQ_MONITOR_HOST}
+      RABBITMQ_MONITOR_PORT: ${RABBITMQ_MONITOR_PORT:-15672}
+      RABBITMQ_MONITOR_USER: ${RABBITMQ_MONITOR_USER}
+      RABBITMQ_MONITOR_PASSWORD: ${RABBITMQ_MONITOR_PASSWORD}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+      CLOUDFLARE_ZONE_ID: ${CLOUDFLARE_ZONE_ID}
+    volumes:
+      # READ-ONLY host mounts for observability
+      - /var/log:/host_logs:ro
+      - /proc:/host_proc:ro
+      - /sys:/host_sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - infra_net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    security_opt:
+      - no-new-privileges:true
+    read_only: false   # app writes to its own /tmp only; host mounts are :ro
+    tmpfs:
+      - /tmp:size=50m,mode=1777
+
+  # ---------------------------------------------------------------------------
+  # OpenClaw - AI Agent with MCP support
+  # ---------------------------------------------------------------------------
+  openclaw:
+    image: ghcr.io/openagentsinc/openagents:latest
+    container_name: openclaw
+    restart: unless-stopped
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+      # MCP server address (internal docker network)
+      MCP_SERVER_URL: http://mcp-monitoring:3000
+    volumes:
+      - ./openclaw/config:/app/config:ro
+      - ./openclaw/data:/app/data
+    ports:
+      - "${OPENCLAW_PORT:-3001}:3001"
+    networks:
+      - infra_net
+    depends_on:
+      mcp-monitoring:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  infra_net:
+    external: true
+    name: infra_net
