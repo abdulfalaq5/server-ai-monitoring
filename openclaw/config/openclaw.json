@@ -1,0 +1,63 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/home/node/.openclaw/workspace"
+    }
+  },
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "ccca5288d47247abee7fbaac3b08abe24134f2791948261c"
+    },
+    "port": 9001,
+    "bind": "lan",
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "models": {
+    "providers": {
+      "sumopod": {
+        "api": "openai-completions",
+        "baseUrl": "https://ai.sumopod.com/v1",
+        "apiKey": "sk-7phcxE07Ex1GSu2-fYNXag",
+        "models": [
+          {
+            "id": "gpt-4o",
+            "name": "GPT-4o (SumoPod)"
+          },
+          {
+            "id": "gpt-4o-mini",
+            "name": "GPT-4o Mini (SumoPod)"
+          }
+        ]
+      }
+    }
+  },
+  "mcp": {
+    "servers": {
+      "server-monitoring": {
+        "transport": "streamable-http",
+        "url": "http://mcp-monitoring:9000/mcp",
+        "enabled": true
+      }
+    }
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "tools": {
+    "profile": "coding"
+  },
+  "skills": {
+    "install": {
+      "nodeManager": "npm"
+    }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.6.1",
+    "lastTouchedAt": "2026-06-04T07:25:39.830Z"
+  }
+}

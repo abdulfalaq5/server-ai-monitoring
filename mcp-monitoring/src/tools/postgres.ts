@@ -37,7 +37,7 @@ export async function getPostgresStatus(): Promise<ToolResult<PostgresStatus>> {
       client.query<{ version: string }>('SELECT version()'),
       client.query<{ uptime: string }>(`SELECT date_trunc('second', current_timestamp - pg_postmaster_start_time()) AS uptime`),
       client.query<{ active: string; max: string }>(`SELECT count(*) FILTER (WHERE state = 'active') AS active, current_setting('max_connections') AS max FROM pg_stat_activity`),
-      client.query<{ size: string }>(`SELECT pg_size_pretty(pg_database_size(current_database())) AS size`),
+      client.query<{ size: string }>(`SELECT pg_database_size(current_database())::text AS size`),
       client.query<{ datname: string }>(`SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname`),
     ]);
 
@@ -50,7 +50,7 @@ export async function getPostgresStatus(): Promise<ToolResult<PostgresStatus>> {
         uptime: uptimeRes.rows[0]?.uptime,
         activConnections: parseInt(connRes.rows[0]?.active || '0', 10),
         maxConnections: parseInt(connRes.rows[0]?.max || '0', 10),
-        dbSizeMb: undefined,
+        dbSizeMb: parseFloat((parseInt(dbSizeRes.rows[0]?.size || '0', 10) / (1024 * 1024)).toFixed(2)),
         databases: dbListRes.rows.map((r) => r.datname),
       },
     };

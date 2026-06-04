@@ -85,7 +85,7 @@ export async function getDockerStats(): Promise<ToolResult<DockerContainerStats[
         cpuPercent,
         memoryUsageMb: memUsage / (1024 * 1024),
         memoryLimitMb: memLimit / (1024 * 1024),
-        memoryPercent,
+        memoryPercent: memPercent,
         netRxMb: netRx / (1024 * 1024),
         netTxMb: netTx / (1024 * 1024),
         blockReadMb: blockRead / (1024 * 1024),

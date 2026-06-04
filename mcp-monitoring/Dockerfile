@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Install dependencies first (cached layer)
 COPY package.json package-lock.json* ./
-RUN npm ci --frozen-lockfile
+RUN npm install
 
 # Copy source and compile
 COPY tsconfig.json ./
@@ -29,7 +29,7 @@ WORKDIR /app
 
 # Only production dependencies
 COPY package.json package-lock.json* ./
-RUN npm ci --frozen-lockfile --omit=dev && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 
 # Copy compiled output from builder
 COPY --from=builder /app/dist ./dist

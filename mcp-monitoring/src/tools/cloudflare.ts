@@ -58,7 +58,7 @@ export async function getCloudflaredStatus(): Promise<ToolResult<CloudflaredStat
             status: t.status,
             connections: t.connections?.length || 0,
           }));
-          tunnelData.running = tunnelData.tunnels.some(t => t.status === 'healthy');
+          tunnelData.running = tunnelData.tunnels?.some(t => t.status === 'healthy') ?? false;
         }
       }
     }
