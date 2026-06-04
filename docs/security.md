@@ -136,12 +136,12 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO monitor_ro;
 - Semua service terisolasi dalam Docker network `infra_net`
 - MCP server tidak expose port ke internet langsung
 - Hanya OpenClaw yang berkomunikasi dengan MCP server (internal network)
-- Gunakan firewall (ufw) untuk membatasi akses port 3000 dari luar
+- Gunakan firewall (ufw) untuk membatasi akses port 9000 dari luar
 
 ```bash
 # Contoh UFW rules
-ufw deny 3000  # MCP server tidak perlu diakses dari internet
-ufw allow 3001 # OpenClaw UI (atau batasi ke IP tertentu)
+ufw deny 9000  # MCP server tidak perlu diakses dari internet
+ufw allow 9001 # OpenClaw UI (atau batasi ke IP tertentu)
 ```
 
 ---

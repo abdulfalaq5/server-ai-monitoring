@@ -4,7 +4,7 @@
 
 export const config = {
   server: {
-    port: parseInt(process.env['MCP_SERVER_PORT'] ?? '3000', 10),
+    port: parseInt(process.env['MCP_SERVER_PORT'] ?? '9000', 10),
     logLevel: process.env['MCP_LOG_LEVEL'] ?? 'info',
     nodeEnv: process.env['NODE_ENV'] ?? 'development',
   },

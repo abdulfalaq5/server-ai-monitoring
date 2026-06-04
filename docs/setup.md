@@ -5,7 +5,7 @@
 - Ubuntu 22.04 LTS atau lebih baru
 - Akses root/sudo
 - Git terinstall
-- Port 3000 dan 3001 tersedia
+- Port 9000 dan 9001 tersedia
 
 ---
 
@@ -161,11 +161,11 @@ docker compose ps
 
 ```bash
 # Test health endpoint MCP server
-curl http://localhost:3000/health
+curl http://localhost:9000/health
 # Expected: {"status":"healthy","service":"mcp-monitoring","version":"1.0.0"}
 
 # Test MCP endpoint
-curl -X POST http://localhost:3000/mcp \
+curl -X POST http://localhost:9000/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
 ```
@@ -176,12 +176,12 @@ curl -X POST http://localhost:3000/mcp \
 
 OpenClaw akan otomatis terhubung ke MCP server melalui environment variable:
 ```
-MCP_SERVER_URL=http://mcp-monitoring:3000
+MCP_SERVER_URL=http://mcp-monitoring:9000
 ```
 
 Ini sudah dikonfigurasi di `docker-compose.yml`. OpenClaw UI dapat diakses di:
 ```
-http://your-server-ip:3001
+http://your-server-ip:9001
 ```
 
 ---
@@ -226,7 +226,7 @@ docker exec mcp-monitoring ls -la /var/run/docker.sock
 ### PostgreSQL connection refused
 ```bash
 # Test koneksi dari dalam container
-docker exec mcp-monitoring wget -qO- http://localhost:3000/health
+docker exec mcp-monitoring wget -qO- http://localhost:9000/health
 
 # Cek apakah postgres container di network yang sama
 docker network inspect infra_net

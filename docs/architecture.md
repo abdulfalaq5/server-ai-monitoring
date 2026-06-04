@@ -9,7 +9,7 @@
 │  ┌──────────────────┐        ┌────────────────────────────┐ │
 │  │    OpenClaw       │        │    MCP Monitoring Server   │ │
 │  │  (AI Agent UI)   │◄──────►│    (Node.js + TypeScript)  │ │
-│  │  port 3001       │  MCP   │    port 3000               │ │
+│  │  port 9001       │  MCP   │    port 9000               │ │
 │  │                  │ HTTP   │                            │ │
 │  └──────────────────┘        └────────────┬───────────────┘ │
 │                                           │                  │
@@ -38,14 +38,14 @@
 - Web UI untuk berinteraksi dengan AI agent
 - Terhubung ke Sambanova/OpenAI-compatible endpoint
 - Menggunakan MCP untuk mengakses monitoring tools
-- Port: 3001
+- Port: 9001
 
 ### MCP Monitoring Server
 - Node.js 22 + TypeScript
 - Implements Model Context Protocol
 - Transport: Streamable HTTP
 - 11 read-only monitoring tools
-- Port: 3000
+- Port: 9000
 
 ## Data Flow
 

@@ -38,10 +38,10 @@ COPY --from=builder /app/dist ./dist
 RUN addgroup -S mcpgroup && adduser -S mcpuser -G mcpgroup
 USER mcpuser
 
-EXPOSE 3000
+EXPOSE 9000
 
 # Health endpoint check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD wget -qO- http://localhost:3000/health || exit 1
+  CMD wget -qO- http://localhost:9000/health || exit 1
 
 CMD ["node", "dist/server.js"]

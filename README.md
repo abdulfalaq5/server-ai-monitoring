@@ -42,7 +42,7 @@ nano .env
 docker compose up -d
 
 # 4. Verifikasi
-curl http://localhost:3000/health
+curl http://localhost:9000/health
 ```
 
 ---
