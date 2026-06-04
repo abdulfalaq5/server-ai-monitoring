@@ -1,5 +1,3 @@
-version: "3.9"
-
 # =============================================================================
 # SERVER AI MONITORING - Docker Compose
 # =============================================================================
@@ -59,7 +57,7 @@ services:
   # OpenClaw - AI Agent with MCP support
   # ---------------------------------------------------------------------------
   openclaw:
-    image: ghcr.io/openagentsinc/openagents:latest
+    image: ghcr.io/openclaw/openclaw:latest
     container_name: openclaw
     restart: unless-stopped
     environment:
