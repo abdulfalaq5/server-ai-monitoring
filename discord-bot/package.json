@@ -1,0 +1,22 @@
+{
+  "name": "openclaw-discord-bot",
+  "version": "1.0.0",
+  "description": "Dedicated Discord Bot for OpenClaw AI Monitoring integration",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-esm src/index.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

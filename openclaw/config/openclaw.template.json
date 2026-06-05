@@ -11,7 +11,7 @@
       "dmPolicy": "pairing"
     },
     "discord": {
-      "enabled": ${DISCORD_ENABLED},
+      "enabled": "__DISCORD_ENABLED__",
       "token": "${DISCORD_BOT_TOKEN}",
       "dmPolicy": "allowlist",
       "allowFrom": [
@@ -34,6 +34,13 @@
     "tailscale": {
       "mode": "off",
       "resetOnExit": false
+    },
+    "http": {
+      "endpoints": {
+        "chatCompletions": {
+          "enabled": true
+        }
+      }
     }
   },
   "models": {

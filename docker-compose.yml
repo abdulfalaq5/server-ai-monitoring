@@ -62,8 +62,8 @@ services:
     container_name: openclaw
     restart: unless-stopped
     environment:
-      # OpenClaw reads its config from /home/node/.openclaw (set via OPENCLAW_CONFIG_PATH)
-      OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
+      # OpenClaw reads its config from /home/node/openclaw.json
+      OPENCLAW_CONFIG_PATH: /home/node/openclaw.json
       # Gateway token must match what's inside openclaw.json
       OPENCLAW_GATEWAY_TOKEN: ccca5288d47247abee7fbaac3b08abe24134f2791948261c
       OPENAI_API_KEY: ${OPENAI_API_KEY}
@@ -72,9 +72,8 @@ services:
       IS_CREATED_UPDATE: ${IS_CREATED_UPDATE:-false}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
-      DISCORD_ENABLED: ${DISCORD_ENABLED:-false}
+      DISCORD_ENABLED: "false"
       DISCORD_ALERT_CHANNEL_ID: ${DISCORD_ALERT_CHANNEL_ID:-}
-      DISCORD_ALLOWED_USERS: ${DISCORD_ALLOWED_USERS:-}
     command: >
       sh -c "
       if [ \"$${IS_CREATED_UPDATE}\" = \"true\" ]; then
@@ -107,6 +106,7 @@ services:
         i=$$((i+1));
       done;
       IFS=\"$$OLD_IFS\";
+      node /home/node/.openclaw/generate-config.js;
       exec node openclaw.mjs gateway --allow-unconfigured --bind lan
       "
     volumes:
@@ -127,6 +127,33 @@ services:
       start_period: 30s
     security_opt:
       - no-new-privileges:true
+
+  # ---------------------------------------------------------------------------
+  # Discord Bot Service
+  # ---------------------------------------------------------------------------
+  discord-bot:
+    build:
+      context: ./discord-bot
+      dockerfile: Dockerfile
+    container_name: discord-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      DISCORD_ALERT_CHANNEL_ID: ${DISCORD_ALERT_CHANNEL_ID}
+      DISCORD_ADMIN_USERS: ${DISCORD_ADMIN_USERS}
+      OPENCLAW_API_URL: http://openclaw:9001
+      OPENCLAW_GATEWAY_TOKEN: ccca5288d47247abee7fbaac3b08abe24134f2791948261c
+      EMAIL_WHITELIST: ${EMAIL_WHITELIST}
+    volumes:
+      - ./storage:/app/storage
+    depends_on:
+      openclaw:
+        condition: service_healthy
+    networks:
+      - infra_net
 
 networks:
   infra_net:
