@@ -45,7 +45,15 @@
     "dmScope": "per-channel-peer"
   },
   "tools": {
-    "profile": "coding"
+    "profile": "coding",
+    "deny": [
+      "${OPENCLAW_DENIED_TOOL_1}",
+      "${OPENCLAW_DENIED_TOOL_2}",
+      "${OPENCLAW_DENIED_TOOL_3}",
+      "${OPENCLAW_DENIED_TOOL_4}",
+      "${OPENCLAW_DENIED_TOOL_5}",
+      "${OPENCLAW_DENIED_TOOL_6}"
+    ]
   },
   "skills": {
     "install": {

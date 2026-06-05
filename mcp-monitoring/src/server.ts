@@ -40,64 +40,132 @@ function createMcpServer() {
     version: '1.0.0',
   });
 
-  // ---- Tool: get_cpu_usage ---------------------------------------------------
+  // Set default authentication state for this per-session instance
+  (server as any).authenticated = false;
+  (server as any).email = null;
+
+  // Helper to register tools that require authentication first
+  const registerSecuredTool = <T extends Record<string, z.ZodType<any>>>(
+    name: string,
+    description: string,
+    parameters: T,
+    handler: (args: { [K in keyof T]: z.infer<T[K]> }) => Promise<unknown>
+  ) => {
+    server.tool(name, description, parameters, (async (args: any) => {
+      if (!(server as any).authenticated) {
+        log.warn(`[tool] Blocked unauthorized call to ${name}`);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              error: "AUTHENTICATION_REQUIRED",
+              message: "Maaf, email tidak terdaftar atau Anda belum login. Anda tidak bisa melanjutkan percakapan ini. Silakan masukkan email yang terdaftar dengan mengetik: /login <email_anda>"
+            }, null, 2)
+          }]
+        };
+      }
+      try {
+        const result = await handler(args);
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      } catch (err: any) {
+        log.error(`Error in tool ${name}:`, err.message);
+        return {
+          content: [{ type: 'text', text: JSON.stringify({ error: err.message }, null, 2) }],
+          isError: true,
+        };
+      }
+    }) as any);
+  };
+
+  // ---- Tool: login (UNSECURED) ------------------------------------------------
   server.tool(
+    'login',
+    'Authenticate the session using your registered email address. Must be called at the very beginning of the chat session to unlock the monitoring tools.',
+    {
+      email: z.string().describe('The email address to login with.'),
+    },
+    (async ({ email }: { email: string }) => {
+      log.info(`[tool] login called with email: ${email}`);
+      const whitelistStr = process.env.EMAIL_WHITELIST || '';
+      const whitelist = whitelistStr.split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+      
+      if (whitelist.includes(email.toLowerCase())) {
+        (server as any).authenticated = true;
+        (server as any).email = email;
+        log.info(`[tool] login successful for ${email}`);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              status: "success",
+              message: `Login berhasil! Email ${email} terdaftar. Anda dapat melanjutkan percakapan.`
+            }, null, 2)
+          }]
+        };
+      } else {
+        log.warn(`[tool] login failed: email ${email} not in whitelist`);
+        return {
+          content: [{
+            type: 'text',
+            text: JSON.stringify({
+              status: "error",
+              message: `Maaf email tidak terdaftar anda tidak bisa melanjutkan percakapan ini, silahkan masukan email yg terdaftar`
+            }, null, 2)
+          }],
+          isError: true,
+        };
+      }
+    }) as any
+  );
+
+  // ---- Tool: get_cpu_usage ---------------------------------------------------
+  registerSecuredTool(
     'get_cpu_usage',
     'Read CPU usage statistics from the host including load averages and per-core count. READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_cpu_usage called');
-      const result = await getCpuUsage();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getCpuUsage();
     }
   );
 
   // ---- Tool: get_memory_usage ------------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_memory_usage',
     'Read memory and swap usage from the host. Returns total, used, free, available, buffers/cache in MB. READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_memory_usage called');
-      const result = await getMemoryUsage();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getMemoryUsage();
     }
   );
 
   // ---- Tool: get_disk_usage --------------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_disk_usage',
     'List mounted disk partitions from the host /proc/mounts. READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_disk_usage called');
-      const result = await getDiskUsage();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getDiskUsage();
     }
   );
 
   // ---- Tool: get_network_status ----------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_network_status',
     'Read network interface statistics (bytes, packets, errors) from host /proc/net/dev. READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_network_status called');
-      const result = await getNetworkStatus();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getNetworkStatus();
     }
   );
 
   // ---- Tool: get_docker_containers -------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_docker_containers',
     'List all Docker containers (running and stopped) with their status, image, ports, and networks. READ-ONLY.',
     {
@@ -105,85 +173,67 @@ function createMcpServer() {
     },
     async () => {
       log.info('[tool] get_docker_containers called');
-      const result = await getDockerContainers();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getDockerContainers();
     }
   );
 
   // ---- Tool: get_docker_stats ------------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_docker_stats',
     'Get live resource stats for all running Docker containers (CPU %, memory, network I/O, block I/O). READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_docker_stats called');
-      const result = await getDockerStats();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getDockerStats();
     }
   );
 
   // ---- Tool: get_postgres_status ---------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_postgres_status',
     'Check PostgreSQL connectivity and read status metrics (version, uptime, connections, DB list). READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_postgres_status called');
-      const result = await getPostgresStatus();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getPostgresStatus();
     }
   );
 
   // ---- Tool: get_rabbitmq_status ---------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_rabbitmq_status',
     'Read RabbitMQ cluster status via Management HTTP API (queues, messages, consumers, nodes). READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_rabbitmq_status called');
-      const result = await getRabbitMQStatus();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getRabbitMQStatus();
     }
   );
 
   // ---- Tool: get_nginx_status ------------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_nginx_status',
     'Check if nginx is running by scanning /proc and reading nginx stub_status endpoint. READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_nginx_status called');
-      const result = await getNginxStatus();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getNginxStatus();
     }
   );
 
   // ---- Tool: get_cloudflared_status ------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'get_cloudflared_status',
     'Check Cloudflare tunnel status via Cloudflare API (read-only token required). READ-ONLY.',
     {},
     async () => {
       log.info('[tool] get_cloudflared_status called');
-      const result = await getCloudflaredStatus();
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await getCloudflaredStatus();
     }
   );
 
   // ---- Tool: read_recent_logs ------------------------------------------------
-  server.tool(
+  registerSecuredTool(
     'read_recent_logs',
     `Read the last N lines from a host log file. Allowed log files: ${getAllowedLogFiles().join(', ')}. Optional filter string. READ-ONLY.`,
     {
@@ -205,10 +255,7 @@ function createMcpServer() {
     },
     async ({ logFile, lines, filter }) => {
       log.info('[tool] read_recent_logs called', { logFile, lines, filter });
-      const result = await readRecentLogs({ logFile, lines, filter });
-      return {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      };
+      return await readRecentLogs({ logFile, lines, filter });
     }
   );
 

@@ -31,6 +31,7 @@ services:
       RABBITMQ_MONITOR_PASSWORD: ${RABBITMQ_MONITOR_PASSWORD}
       CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
       CLOUDFLARE_ZONE_ID: ${CLOUDFLARE_ZONE_ID}
+      EMAIL_WHITELIST: ${EMAIL_WHITELIST}
     volumes:
       # READ-ONLY host mounts for observability
       - /var/log:/host_logs:ro
@@ -68,6 +69,26 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL}
       OPENAI_MODEL: ${OPENAI_MODEL}
+      IS_CREATED_UPDATE: ${IS_CREATED_UPDATE:-false}
+    command: >
+      sh -c "
+      if [ \"$${IS_CREATED_UPDATE}\" = \"true\" ]; then
+        export OPENCLAW_DENIED_TOOL_1='none';
+        export OPENCLAW_DENIED_TOOL_2='none';
+        export OPENCLAW_DENIED_TOOL_3='none';
+        export OPENCLAW_DENIED_TOOL_4='none';
+        export OPENCLAW_DENIED_TOOL_5='none';
+        export OPENCLAW_DENIED_TOOL_6='none';
+      else
+        export OPENCLAW_DENIED_TOOL_1='write';
+        export OPENCLAW_DENIED_TOOL_2='write_file';
+        export OPENCLAW_DENIED_TOOL_3='edit';
+        export OPENCLAW_DENIED_TOOL_4='edit_file';
+        export OPENCLAW_DENIED_TOOL_5='apply_patch';
+        export OPENCLAW_DENIED_TOOL_6='group:runtime';
+      fi;
+      exec node openclaw.mjs gateway --allow-unconfigured --bind lan
+      "
     volumes:
       # Mount config dir to the path OpenClaw expects: /home/node/.openclaw
       - ./openclaw/config:/home/node/.openclaw
