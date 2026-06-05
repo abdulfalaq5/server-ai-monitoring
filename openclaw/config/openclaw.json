@@ -9,6 +9,18 @@
       "enabled": true,
       "botToken": "${TELEGRAM_BOT_TOKEN}",
       "dmPolicy": "pairing"
+    },
+    "discord": {
+      "enabled": ${DISCORD_ENABLED},
+      "token": "${DISCORD_BOT_TOKEN}",
+      "dmPolicy": "allowlist",
+      "allowFrom": [
+        "${DISCORD_ALLOWED_USER_1}",
+        "${DISCORD_ALLOWED_USER_2}",
+        "${DISCORD_ALLOWED_USER_3}",
+        "${DISCORD_ALLOWED_USER_4}",
+        "${DISCORD_ALLOWED_USER_5}"
+      ]
     }
   },
   "gateway": {

@@ -71,6 +71,10 @@ services:
       OPENAI_MODEL: ${OPENAI_MODEL}
       IS_CREATED_UPDATE: ${IS_CREATED_UPDATE:-false}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      DISCORD_ENABLED: ${DISCORD_ENABLED:-false}
+      DISCORD_ALERT_CHANNEL_ID: ${DISCORD_ALERT_CHANNEL_ID:-}
+      DISCORD_ALLOWED_USERS: ${DISCORD_ALLOWED_USERS:-}
     command: >
       sh -c "
       if [ \"$${IS_CREATED_UPDATE}\" = \"true\" ]; then
@@ -88,6 +92,21 @@ services:
         export OPENCLAW_DENIED_TOOL_5='apply_patch';
         export OPENCLAW_DENIED_TOOL_6='group:runtime';
       fi;
+      export DISCORD_ALLOWED_USER_1='none';
+      export DISCORD_ALLOWED_USER_2='none';
+      export DISCORD_ALLOWED_USER_3='none';
+      export DISCORD_ALLOWED_USER_4='none';
+      export DISCORD_ALLOWED_USER_5='none';
+      i=1;
+      OLD_IFS=\"$$IFS\";
+      IFS=',';
+      for user in $$DISCORD_ALLOWED_USERS; do
+        if [ $$i -le 5 ]; then
+          export DISCORD_ALLOWED_USER_$$i=\"$$user\";
+        fi;
+        i=$$((i+1));
+      done;
+      IFS=\"$$OLD_IFS\";
       exec node openclaw.mjs gateway --allow-unconfigured --bind lan
       "
     volumes:
