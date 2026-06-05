@@ -70,6 +70,7 @@ services:
       OPENAI_BASE_URL: ${OPENAI_BASE_URL}
       OPENAI_MODEL: ${OPENAI_MODEL}
       IS_CREATED_UPDATE: ${IS_CREATED_UPDATE:-false}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
     command: >
       sh -c "
       if [ \"$${IS_CREATED_UPDATE}\" = \"true\" ]; then

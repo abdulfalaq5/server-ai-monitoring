@@ -4,6 +4,13 @@
       "workspace": "/home/node/.openclaw/workspace"
     }
   },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "dmPolicy": "pairing"
+    }
+  },
   "gateway": {
     "mode": "local",
     "auth": {
