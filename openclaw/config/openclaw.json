@@ -21,16 +21,12 @@
     "providers": {
       "sumopod": {
         "api": "openai-completions",
-        "baseUrl": "https://ai.sumopod.com/v1",
-        "apiKey": "sk-7phcxE07Ex1GSu2-fYNXag",
+        "baseUrl": "${OPENAI_BASE_URL}",
+        "apiKey": "${OPENAI_API_KEY}",
         "models": [
           {
-            "id": "gpt-4o",
-            "name": "GPT-4o (SumoPod)"
-          },
-          {
-            "id": "gpt-4o-mini",
-            "name": "GPT-4o Mini (SumoPod)"
+            "id": "${OPENAI_MODEL}",
+            "name": "${OPENAI_MODEL}"
           }
         ]
       }

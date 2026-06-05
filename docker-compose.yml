@@ -65,6 +65,9 @@ services:
       OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
       # Gateway token must match what's inside openclaw.json
       OPENCLAW_GATEWAY_TOKEN: ccca5288d47247abee7fbaac3b08abe24134f2791948261c
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL}
+      OPENAI_MODEL: ${OPENAI_MODEL}
     volumes:
       # Mount config dir to the path OpenClaw expects: /home/node/.openclaw
       - ./openclaw/config:/home/node/.openclaw
