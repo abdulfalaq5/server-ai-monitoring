@@ -2,13 +2,18 @@
   "activeAlerts": {
     "rabbitmq_down": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-08T07:06:26.892Z",
+      "lastNotified": "2026-06-08T07:26:19.197Z",
       "errorDetails": "RabbitMQ Management API Error: connect ECONNREFUSED 127.0.0.1:15672"
     },
     "cloudflare_disconnected": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-08T07:06:26.892Z",
-      "errorDetails": "Authentication error"
+      "lastNotified": "2026-06-08T07:26:19.197Z",
+      "errorDetails": "Cloudflare API Error: HTTP 403: {\"success\":false,\"errors\":[{\"code\":10000,\"message\":\"Authentication error\"}],\"messages\":[],\"result\":null}"
+    },
+    "nginx_down": {
+      "firstSeen": "2026-06-08T07:11:15.278Z",
+      "lastNotified": "2026-06-08T07:26:19.197Z",
+      "errorDetails": "nginx is not running"
     }
   },
   "cpuHighConsecutiveCount": 0
