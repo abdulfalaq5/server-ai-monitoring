@@ -1,10 +1,10 @@
-import { 
-  Client, 
-  GatewayIntentBits, 
-  Partials, 
-  REST, 
-  Routes, 
-  Message 
+import {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  REST,
+  Routes,
+  Message
 } from 'discord.js';
 import { config } from './config.js';
 import { slashCommandsList, handleSlashCommand } from './commands/slash.js';
@@ -31,7 +31,7 @@ async function deploySlashCommands() {
   const rest = new REST({ version: '10' }).setToken(config.discordToken);
   try {
     console.log('[Discord] Started refreshing application (/) commands...');
-    
+
     // Register commands globally
     await rest.put(
       Routes.applicationCommands(client.user!.id),
@@ -46,7 +46,7 @@ async function deploySlashCommands() {
 
 client.once('ready', async () => {
   console.log(`[Discord] Bot is logged in as ${client.user?.tag}!`);
-  
+
   // Register Slash Commands
   await deploySlashCommands();
 
@@ -78,12 +78,10 @@ function hasGuildAccessRole(message: Message): boolean {
     if (typeof rolesCache === 'object' && 'cache' in rolesCache) {
       const roles = rolesCache.cache as any;
       const allowedRoles = ['Infra Admin', 'Infra Engineer', 'Viewer'];
-      if (roles.some((role: any) => allowedRoles.includes(role.name))) {
-        return true;
-      }
+      return roles.some((role: any) => allowedRoles.includes(role.name));
     }
   }
-  return true; // default to true if role checks are not active
+  return true; // default to true if role checks are not active (e.g. DM)
 }
 
 // Split long messages to fit Discord's 2000 character limit
@@ -122,14 +120,14 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   const isDM = !message.guild;
-  
+
   // Check if message is intended for the bot:
   // 1. Direct Message (DM)
   // 2. Mention of the bot in any channel
   // 3. Any message in a channel named 'ai-monitoring'
   const isMentioned = message.mentions.has(client.user!);
   const isAiChannel = message.channel && 'name' in message.channel && message.channel.name === 'ai-monitoring';
-  
+
   if (!isDM && !isMentioned && !isAiChannel) {
     return;
   }

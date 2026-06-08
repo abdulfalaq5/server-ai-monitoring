@@ -2,18 +2,18 @@
   "activeAlerts": {
     "rabbitmq_down": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-05T08:57:35.129Z",
+      "lastNotified": "2026-06-08T02:42:54.852Z",
       "errorDetails": "Unreachable or Management API failure."
     },
     "cloudflare_disconnected": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-05T08:57:35.129Z",
-      "errorDetails": "HTTP 403: {\"success\":false,\"errors\":[{\"code\":10000,\"message\":\"Authentication error\"}],\"messages\":[],\"result\":null}"
+      "lastNotified": "2026-06-08T02:42:54.852Z",
+      "errorDetails": "Authentication error"
     },
     "nginx_down": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-05T08:57:35.129Z",
-      "errorDetails": "nginx not running"
+      "lastNotified": "2026-06-08T02:42:54.852Z",
+      "errorDetails": "Nginx not running"
     }
   },
   "cpuHighConsecutiveCount": 0
