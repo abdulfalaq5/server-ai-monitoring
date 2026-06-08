@@ -2,18 +2,18 @@
   "activeAlerts": {
     "rabbitmq_down": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-08T02:42:54.852Z",
-      "errorDetails": "Unreachable or Management API failure."
+      "lastNotified": "2026-06-08T03:02:39.025Z",
+      "errorDetails": "RabbitMQ Management API Error: "
     },
     "cloudflare_disconnected": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-08T02:42:54.852Z",
+      "lastNotified": "2026-06-08T03:02:39.025Z",
       "errorDetails": "Authentication error"
     },
     "nginx_down": {
-      "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-08T02:42:54.852Z",
-      "errorDetails": "Nginx not running"
+      "firstSeen": "2026-06-08T03:12:49.681Z",
+      "lastNotified": "2026-06-08T03:12:49.681Z",
+      "errorDetails": "nginx is not running"
     }
   },
   "cpuHighConsecutiveCount": 0
