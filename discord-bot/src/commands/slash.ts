@@ -147,7 +147,7 @@ export async function handleSlashCommand(interaction: ChatInputCommandInteractio
   if (commandName === 'login') {
     const email = interaction.options.getString('email', true).trim().toLowerCase();
     
-    if (!config.emailWhitelist.includes(email)) {
+    if (!config.emailWhitelistMonitoring.includes(email) && !config.emailWhitelistHR.includes(email)) {
       return interaction.reply({
         content: `❌ Maaf, email \`${email}\` tidak terdaftar dalam whitelist sistem. Hubungi administrator untuk menambahkan email Anda.`,
         ephemeral: true

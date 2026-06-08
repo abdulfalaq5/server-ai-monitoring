@@ -2,18 +2,13 @@
   "activeAlerts": {
     "rabbitmq_down": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-08T03:02:39.025Z",
-      "errorDetails": "RabbitMQ Management API Error: "
+      "lastNotified": "2026-06-08T07:06:26.892Z",
+      "errorDetails": "RabbitMQ Management API Error: connect ECONNREFUSED 127.0.0.1:15672"
     },
     "cloudflare_disconnected": {
       "firstSeen": "2026-06-05T08:57:35.129Z",
-      "lastNotified": "2026-06-08T03:02:39.025Z",
+      "lastNotified": "2026-06-08T07:06:26.892Z",
       "errorDetails": "Authentication error"
-    },
-    "nginx_down": {
-      "firstSeen": "2026-06-08T03:12:49.681Z",
-      "lastNotified": "2026-06-08T03:12:49.681Z",
-      "errorDetails": "nginx is not running"
     }
   },
   "cpuHighConsecutiveCount": 0

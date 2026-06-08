@@ -33,6 +33,10 @@ export const config = {
     baseUrl: 'https://api.cloudflare.com/client/v4',
   },
 
+  qdrant: {
+    url: process.env['QDRANT_URL'] ?? 'http://localhost:6333',
+  },
+
   host: {
     // Paths mounted read-only from host into container
     proc: '/host_proc',

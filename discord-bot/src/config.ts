@@ -18,14 +18,15 @@ export const config: BotConfig = {
   adminUsers: parseCsv(process.env.DISCORD_ADMIN_USERS),
   openclawApiUrl: process.env.OPENCLAW_API_URL || 'http://openclaw:9001',
   openclawToken: process.env.OPENCLAW_GATEWAY_TOKEN || 'ccca5288d47247abee7fbaac3b08abe24134f2791948261c',
-  emailWhitelist: parseCsv(process.env.EMAIL_WHITELIST),
+  emailWhitelistMonitoring: parseCsv(process.env.EMAIL_WHITELIST_MONITORING),
+  emailWhitelistHR: parseCsv(process.env.EMAIL_WHITELIST_HR),
 };
 
 // Validate required configurations
 const missing: string[] = [];
 if (!config.discordToken) missing.push('DISCORD_BOT_TOKEN');
 if (!config.alertChannelId) missing.push('DISCORD_ALERT_CHANNEL_ID');
-if (config.emailWhitelist.length === 0) missing.push('EMAIL_WHITELIST');
+if (config.emailWhitelistMonitoring.length === 0 && config.emailWhitelistHR.length === 0) missing.push('EMAIL_WHITELIST_MONITORING or EMAIL_WHITELIST_HR');
 
 if (missing.length > 0) {
   console.error(`[ERROR] Missing required environment variables: ${missing.join(', ')}`);

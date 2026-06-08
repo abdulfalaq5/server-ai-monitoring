@@ -33,8 +33,8 @@ export class AlertService {
     console.log('[AlertService] Running background metrics threshold evaluation...');
     
     // Alerting requires a whitelisted email to authenticate the MCP session.
-    // We use the first email in the whitelist as the admin service account.
-    const adminEmail = config.emailWhitelist[0];
+    // We use the first email in the monitoring whitelist as the admin service account.
+    const adminEmail = config.emailWhitelistMonitoring[0];
     if (!adminEmail) {
       console.warn('[AlertService] Warning: No email whitelist entries configured. Skipping metrics check.');
       return;

@@ -149,7 +149,7 @@ client.on('messageCreate', async (message) => {
       return message.reply('❌ Format salah. Silakan ketik: `/login <email_anda>`');
     }
 
-    if (!config.emailWhitelist.includes(email)) {
+    if (!config.emailWhitelistMonitoring.includes(email) && !config.emailWhitelistHR.includes(email)) {
       return message.reply(`❌ Maaf, email \`${email}\` tidak terdaftar dalam whitelist sistem.`);
     }
 

@@ -2,17 +2,17 @@
 # MCP Monitoring Server - Dockerfile
 # =============================================================================
 # Multi-stage build: builder → production
-# Node.js 22 Alpine (minimal attack surface)
+# Node.js 22 Slim (Debian) for glibc compatibility (required by onnxruntime)
 # =============================================================================
 
 # ---- Stage 1: Builder ----
-FROM node:22-alpine AS builder
+FROM node:22-bookworm-slim AS builder
 
 WORKDIR /app
 
 # Install dependencies first (cached layer)
-COPY package.json package-lock.json* ./
-RUN npm install
+COPY package.json ./
+RUN npm config set fetch-retry-mintimeout 20000 && npm config set fetch-retry-maxtimeout 120000 && npm install
 
 # Copy source and compile
 COPY tsconfig.json ./
@@ -20,23 +20,22 @@ COPY src/ ./src/
 RUN npm run build
 
 # ---- Stage 2: Production ----
-FROM node:22-alpine AS production
+FROM node:22-bookworm-slim AS production
 
 # Install wget for healthcheck
-RUN apk add --no-cache wget
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Only production dependencies
-COPY package.json package-lock.json* ./
+COPY package.json ./
 RUN npm install --omit=dev && npm cache clean --force
 
 # Copy compiled output from builder
 COPY --from=builder /app/dist ./dist
 
-# Non-root user for security
-RUN addgroup -S mcpgroup && adduser -S mcpuser -G mcpgroup
-USER mcpuser
+# Use existing node user for security
+USER node
 
 EXPOSE 9000
 

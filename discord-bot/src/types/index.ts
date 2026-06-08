@@ -9,7 +9,8 @@ export interface BotConfig {
   adminUsers: string[];
   openclawApiUrl: string;
   openclawToken: string;
-  emailWhitelist: string[];
+  emailWhitelistMonitoring: string[];
+  emailWhitelistHR: string[];
 }
 
 export interface UserEmailMap {
